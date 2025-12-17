@@ -38,7 +38,8 @@
                 <ul class="navbar-nav d-flex flex-row gap-3">
                     @if(Auth::check())
                         <li class="nav-item d-none d-lg-block">
-                            <a class="nav-link" href="{{ route('petitions.index') }}">Mis peticiones</a>
+                            {{-- ENLACE CORREGIDO: Apunta a mis peticiones --}}
+                            <a class="nav-link" href="{{ route('petitions.mine') }}">Mis peticiones</a>
                         </li>
                         <li class="nav-item d-none d-lg-block">
                             <a class="nav-link" href="{{ route('petitions.petitionssigned') }}">Mis Firmas</a>
@@ -48,7 +49,7 @@
                         </li>
                     @endif
                     <li class="nav-item">
-                        <a class="nav-link" href="/petitions/index">
+                        <a class="nav-link" href="{{ route('petitions.index') }}">
                             <i class="fas fa-search mr-1"></i> Buscar peticiones
                         </a>
                     </li>
@@ -61,7 +62,6 @@
             <a href="{{ route('petitions.edit-add') }}" class="btn btn-outline-secondary peticion mr-2 text-decoration-none">
                 Inicia una petición
             </a>
-
 
             @if(Auth::check())
                 <div class="position-relative ms-2">
@@ -77,11 +77,12 @@
                     <ul id="userDropdownMenu" class="dropdown-menu shadow mt-2" style="min-width: 200px;">
                         <li><a class="dropdown-item py-2" href="{{ route('profile.edit') }}">Mi Perfil</a></li>
 
-                        <li class="d-lg-none"><a class="dropdown-item py-2" href="{{ route('petitions.index') }}">Mis Peticiones</a></li>
+                        {{-- ENLACE CORREGIDO: También en el menú móvil --}}
+                        <li class="d-lg-none"><a class="dropdown-item py-2" href="{{ route('petitions.mine') }}">Mis Peticiones</a></li>
 
                         <li><a class="dropdown-item py-2" href="{{ route('petitions.petitionssigned') }}">Mis Firmas</a></li>
 
-                        <li class="d-lg-none"><a class="dropdown-item py-2" href="/petitions/index">Buscar peticiones</a></li>
+                        <li class="d-lg-none"><a class="dropdown-item py-2" href="{{ route('petitions.index') }}">Buscar peticiones</a></li>
 
                         <li><hr class="dropdown-divider"></li>
                         <li>

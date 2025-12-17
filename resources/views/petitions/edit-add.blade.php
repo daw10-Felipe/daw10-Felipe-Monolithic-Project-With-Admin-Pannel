@@ -13,29 +13,33 @@
                 </div>
             @endif
 
-            <form action="{{ route('petitions.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ isset($petition) ? route('petitions.update', $petition->id) : route('petitions.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                @if(isset($petition))
+                    @method('PUT')
+                @endif
 
                 <div class="row">
                     <div class="col-md-10 offset-md-1">
                         <h2 class="petition-step-title text-center">
-                            Primero, cuéntanos sobre tu causa
+                            {{ isset($petition) ? 'Editar tu petición' : 'Primero, cuéntanos sobre tu causa' }}
                         </h2>
                         <p class="petition-step-subtitle text-center">
-                            Combinaremos tus palabras con nuestra experiencia para crearte el borrador de petición más impactante.
+                            {{ isset($petition) ? 'Modifica los detalles necesarios para mejorar tu petición.' : 'Combinaremos tus palabras con nuestra experiencia para crearte el borrador de petición más impactante.' }}
                         </p>
 
                         <div class="form-group text-start mt-4">
                             <label for="title" class="form-label petition-form-label">Título de la petición</label>
-                            <input type="text" name="title" class="form-control petition-input" id="title" placeholder="Ej: Salvar el parque central..." value="{{ old('title') }}" required>
+                            <input type="text" name="title" class="form-control petition-input" id="title" placeholder="Ej: Salvar el parque central..." value="{{ old('title', $petition->title ?? '') }}" required>
                         </div>
 
                         <div class="form-group text-start mt-4">
                             <label for="category" class="form-label petition-form-label">Categoría</label>
                             <select name="category" id="category" class="form-control petition-input" required>
-                                <option value="">Selecciona una categoría</option>
+                                <option value="" disabled {{ !isset($petition) ? 'selected' : '' }}>Selecciona una categoría</option>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>
+                                    <option value="{{ $category->id }}"
+                                        {{ (old('category', $petition->category_id ?? '') == $category->id) ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
@@ -44,12 +48,12 @@
 
                         <div class="form-group text-start mt-4">
                             <label for="destinatary" class="form-label petition-form-label">Destinatario</label>
-                            <input type="text" name="destinatary" class="form-control petition-input" id="destinatary" placeholder="Ej: Ayuntamiento de Madrid" value="{{ old('destinatary') }}" required>
+                            <input type="text" name="destinatary" class="form-control petition-input" id="destinatary" placeholder="Ej: Ayuntamiento de Madrid" value="{{ old('destinatary', $petition->destinatary ?? '') }}" required>
                         </div>
 
                         <div class="form-group text-start mt-4">
                             <label for="petitionCause" class="form-label petition-form-label">Quiero...</label>
-                            <textarea name="description" class="form-control petition-textarea" id="petitionCause" rows="5" placeholder="Exigir que todos los edificios públicos sean accesibles..." required>{{ old('description') }}</textarea>
+                            <textarea name="description" class="form-control petition-textarea" id="petitionCause" rows="5" placeholder="Exigir que todos los edificios públicos sean accesibles..." required>{{ old('description', $petition->description ?? '') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -59,19 +63,35 @@
                 <div class="container my-5">
                     <div class="row">
                         <div class="col-md-10 offset-md-1">
-                            <h2 class="petition-step-title text-center">Una última cosa</h2>
+                            <h2 class="petition-step-title text-center">
+                                {{ isset($petition) ? 'Imagen de la petición' : 'Una última cosa' }}
+                            </h2>
                             <p class="petition-step-subtitle text-center">
-                                Añadir una imagen hará que tu petición destaque más.
+                                {{ isset($petition) ? 'Puedes subir una nueva imagen si deseas cambiar la actual.' : 'Añadir una imagen hará que tu petición destaque más.' }}
                             </p>
 
+                            @if(isset($petition) && $petition->files->count() > 0)
+                                <div class="mb-4 text-center">
+                                    <p class="text-muted small mb-2">Imagen actual:</p>
+                                    <img src="{{ asset('petitions/' . $petition->files->first()->file_path) }}"
+                                         alt="Current Image"
+                                         class="img-fluid rounded shadow-sm"
+                                         style="max-height: 200px;">
+                                </div>
+                            @endif
+
                             <div class="form-group text-start mt-4">
-                                <label for="file" class="form-label petition-form-label">Imagen principal</label>
-                                <input type="file" name="file" class="form-control petition-input" id="file" required>
+                                <label for="file" class="form-label petition-form-label">
+                                    {{ isset($petition) ? 'Cambiar imagen (Opcional)' : 'Imagen principal' }}
+                                </label>
+                                <input type="file" name="file" class="form-control petition-input" id="file" {{ isset($petition) ? '' : 'required' }}>
                             </div>
 
                             <div class="petition-button-group mt-4 d-flex justify-content-between">
-                                <a href="{{ url()->previous() }}" class="btn petition-btn-back">Volver</a>
-                                <button type="submit" class="btn petition-btn-continue">Continuar</button>
+                                <a href="{{ isset($petition) ? route('petitions.show', $petition->id) : url()->previous() }}" class="btn petition-btn-back">Cancelar</a>
+                                <button type="submit" class="btn petition-btn-continue">
+                                    {{ isset($petition) ? 'Guardar Cambios' : 'Continuar' }}
+                                </button>
                             </div>
                         </div>
                     </div>

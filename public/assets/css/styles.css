@@ -892,3 +892,7 @@ header {
   white-space: nowrap;
   margin-left: 1rem;
 }
+.user-panel:hover {
+    background-color: rgba(0,0,0,0.1);
+    cursor: pointer;
+}

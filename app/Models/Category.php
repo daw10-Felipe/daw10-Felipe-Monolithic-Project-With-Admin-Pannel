@@ -13,6 +13,7 @@ class Category extends Model
     protected $fillable = [
         'name',
     ];
+    public $timestamps = true;
 
     public function petitions(): HasMany
     {

@@ -123,4 +123,43 @@ class PetitionController extends Controller
         $petitions = $user->signedPetitions;
         return view('petitions.index', compact('petitions'));
     }
+
+
+
+    public function edit($id)
+    {
+        $petition = Petition::findOrFail($id);
+        $this->authorize('update', $petition);
+        $categories = Category::all();
+        return view('petitions.edit-add', compact('petition', 'categories'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $petition = Petition::findOrFail($id);
+        $this->authorize('update', $petition);
+
+        $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'required',
+            'category' => 'required',
+            'file' => 'nullable',
+        ]);
+
+        $petition->title = $request->title;
+        $petition->description = $request->description;
+        $petition->destinatary = $request->destinatary;
+
+        $category = Category::findOrFail($request->category);
+        $petition->category()->associate($category);
+
+        if ($request->hasFile('file')) {
+            $this->fileUpload($request, $petition->id);
+        }
+
+        $petition->save();
+
+        return redirect()->route('petitions.show', $id)->with('success', 'Petición actualizada correctamente.');
+    }
+
 }

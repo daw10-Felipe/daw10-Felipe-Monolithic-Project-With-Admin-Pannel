@@ -4,7 +4,6 @@
     <main>
         <div class="container" style="padding-top: 40px; padding-bottom: 80px;">
 
-
             <div class="row">
                 <div class="col-12">
                     @if(session('success'))
@@ -61,9 +60,17 @@
                 </div>
 
                 <div class="col-lg-4 col-12">
+
+                    @can('update', $petition)
+                        <div class="mb-3">
+                            <a href="{{ route('petitions.edit', $petition->id) }}" class="btn btn-primary w-100">
+                                <i class="fas fa-edit me-2"></i> Editar Petición
+                            </a>
+                        </div>
+                    @endcan
+
                     <div class="card shadow-sm border-0 sticky-top" style="top: 20px; z-index: 1;">
                         <div class="card-body p-4">
-
 
                             @php
                                 $meta = 100;
@@ -88,15 +95,12 @@
 
                             <h5 class="card-title mb-3">¡Firma esta petición!</h5>
 
-
                             @auth
                                 @php
-
                                     $hasSigned = $petition->signers()->where('user_id', Auth::id())->exists();
                                 @endphp
 
                                 @if($hasSigned)
-
                                     <div class="mb-3 text-center">
                                         <p class="text-success fw-bold">
                                             ¡Ya has firmado esta petición!
@@ -106,7 +110,6 @@
                                         Firmado
                                     </button>
                                 @else
-
                                     <form action="{{ route('petitions.sign', $petition->id) }}" method="POST">
                                         @csrf
                                         <div class="mb-3">

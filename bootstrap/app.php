@@ -11,9 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Tu configuración de CSRF
         $middleware->validateCsrfTokens(
             except: ['register', 'login']
         );
+
+        // --- AQUI REGISTRAMOS EL ALIAS 'admin' ---
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
